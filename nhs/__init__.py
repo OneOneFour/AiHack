@@ -1,15 +1,13 @@
-from sqlalchemy import create_engine
-import os
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from .config import Config
+from flask import Flask
 
-DB = os.environ.get("POSTGRES_DB", "db")
-USER = os.environ.get("POSTGRES_USER", "user")
-PASSWORD = os.environ.get("POSTGRES_PWD", "")
-HOSTNAME = os.environ.get("HOSTNAME", "localhost")
+app = Flask(__name__)
+app.config.from_object(Config)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-engine = create_engine(f"postgresql://{USER}:{PASSWORD}@{HOSTNAME}/{DB}")
-Session = sessionmaker(bind=engine)
-Base = declarative_base()
-
+from .models import BNFStem, Location, Prescription, LocationPatientNumbers
+from .views import *
