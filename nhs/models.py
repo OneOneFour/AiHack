@@ -3,8 +3,8 @@ import os
 from sqlalchemy import Column, String, Integer, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.exc import NoResultFound
-
-from . import Base, Session
+import pandas as pd
+from . import Base, Session, engine
 import csv
 
 
@@ -14,10 +14,20 @@ class Location(Base):
     gp_code = Column(String, unique=True)
     gp_name = Column(String)
     gp_fulladdress = Column(String)
+    gp_number_of_patients = Column(String, nullable=True)
     prescriptions = relationship("Prescription", backref="location")
 
     def __repr__(self):
         return self.gp_code
+
+    @classmethod
+    def get_dataframe(cls):
+        df = pd.read_sql(f"SELECT * FROM {cls.__tablename__}", engine)
+        return df
+
+    @staticmethod
+    def add_patient_numbers_from_csv(csv_path):
+        pass
 
     @staticmethod
     def load_from_csv(csv_path):
@@ -25,9 +35,8 @@ class Location(Base):
         try:
             with open(csv_path) as csv_file:
                 reader = csv.reader(csv_file, delimiter=",")
-                headers = next(reader, None)
                 for row in reader:
-                    full_address = ",".join(row[4:9])
+                    full_address = ",".join(row[4:10])
                     gp = Location(gp_code=row[0], gp_name=row[1], gp_fulladdress=full_address)
                     session.add(gp)
             session.commit()
@@ -45,6 +54,11 @@ class BNFStem(Base):
     code_stem = Column(Integer, unique=True)
     code_name = Column(String)
     prescriptions = relationship("Prescription", backref="bnf_code")
+
+    @classmethod
+    def get_dataframe(cls):
+        df = pd.read_sql(f"SELECT * FROM {cls.__tablename__}", engine)
+        return df
 
     @staticmethod
     def load_from_csv(csv_path):
@@ -81,6 +95,11 @@ class Prescription(Base):
     number_of_prescriptions = Column(Integer)
     date_span = Column(Date)
 
+    @classmethod
+    def get_dataframe(cls):
+        df = pd.read_sql(f"SELECT * FROM {cls.__tablename__}", engine)
+        return df
+
     @staticmethod
     def load_from_csv(BASE_DIR, prefix):
         from glob import glob
@@ -106,7 +125,7 @@ class Prescription(Base):
                             except NoResultFound:
                                 print(f"No results found for code:{h},bnf_code:{bnfcode}")
                             session.add(p)
-                    session.commit()
+                        session.commit()
         except:
             import traceback
             traceback.print_exc()
