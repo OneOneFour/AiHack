@@ -11,7 +11,11 @@ import seaborn as sns
 
 pres = Prescription.get_dataframe()
 print(pres.head())
-pres['bnf_code_id'] = pres['bnf_code_id'].astype(str)
+
+pres['bnf_code_id'].to_string()
+fours = pres[pres['bnf_code_id'].str.startswith('4')]
+print(fours.head())
+
 #fours =  # find the number of prescriptions beginning with a 4 for each time period
 
 
