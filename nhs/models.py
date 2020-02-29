@@ -2,6 +2,8 @@ import os
 
 from sqlalchemy import Column, String, Integer, ForeignKey, Date
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm.exc import NoResultFound
+
 from . import Base, Session
 import csv
 
@@ -97,10 +99,13 @@ class Prescription(Base):
                         for i, h in enumerate(header):
                             if not row[i].isnumeric():
                                 continue
-                            location = session.query(Location).filter(Location.gp_code == h).one()
-                            bnf = session.query(BNFStem).filter(BNFStem.code_stem == bnfcode).one()
-                            p = Prescription(date_span=datetime.strptime(row[0], "%Y-%m-%d"),
-                                             location=location, bnf_code=bnf, number_of_prescriptions=row[i])
+                            try:
+                                location = session.query(Location).filter(Location.gp_code == h).one()
+                                bnf = session.query(BNFStem).filter(BNFStem.code_stem == bnfcode).one()
+                                p = Prescription(date_span=datetime.strptime(row[0], "%Y-%m-%d"),
+                                                 location=location, bnf_code=bnf, number_of_prescriptions=row[i])
+                            except NoResultFound:
+                                print(f"No results found for code:{h},bnf_code:{bnfcode}")
                             session.add(p)
                 session.commit()
         except:
