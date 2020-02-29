@@ -91,7 +91,6 @@ class Prescription(Base):
     __tablename__ = "prescriptions"
     id = Column(Integer, primary_key=True, nullable=False)
     bnf_code_id = Column(Integer, ForeignKey("bnf_stems.id"))
-
     location_id = Column(Integer, ForeignKey("locations.id"))
     number_of_prescriptions = Column(Integer)
     date_span = Column(Date)

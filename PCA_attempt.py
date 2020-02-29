@@ -1,37 +1,49 @@
 from nhs.models import Prescription
-pres = Prescription.get_dataframe()
-pres['month_time'] = ((pres['date_span'].year() - 2015) * 12 )+ (pres['date_span'].month() -1)
-pres['longitude'] =
+from nhs.models import Location
+print("hello1")
+# Reconfigure the prescription dataframe for ML
+#pres = Prescription.get_dataframe()
+from datetime import datetime
 
-nomi = pgeocode.Nominatim('gb')
-gp_practices = pres['gp_code'].unique()
+#pres['month_time'] = ((pres['date_span'].year - 2015) * 12 )+ (pres['date_span'].month -1)
+
+#pres['longitude'] =
+
+loc = Location.get_dataframe()  # Taking a very very long time to run
+print("hello2")
+print(loc["gp_fulladdress"].head(10))
+print("hello3")
+exit()
+
+#gp_practices = pres['gp_code'].unique()
 
 #gp_pr_use_040101 = pd.DataFrame(gp_practices, columns=['practice_code'])
-gp_pr_w_postcode = gp_pr_use_040101.merge(adresses, on='practice_code').dropna(axis=1)
+#gp_pr_w_postcode = gp_pr_use_040101.merge(adresses, on='practice_code').dropna(axis=1)
 
-gp_pr_w_postcode['longitude'] = nomi.query_postal_code(list(gp_pr_w_postcode['postcode'])).longitude
-gp_pr_w_postcode['latitude'] = nomi.query_postal_code(list(gp_pr_w_postcode['postcode'])).latitude
+#gp_pr_w_postcode['longitude'] = nomi.query_postal_code(list(gp_pr_w_postcode['postcode'])).longitude
+#gp_pr_w_postcode['latitude'] = nomi.query_postal_code(list(gp_pr_w_postcode['postcode'])).latitude
 
-
-
-# Train / test split
+# Train / test split ####################################################
     # How do we want to define this? Temporally?
+from sklearn.model_selection import train_test_split
+
+# Standardarise the values ####################################################
+#from sklearn.preprocessing import StandardScaler
+#scaler = StandardScaler()
+#scaler.fit(history)
+#scaled = scaler.transform(history)
+
+# PCA   ####################################################
+import numpy as np
+#from sklearn.decomposition import PCA
+#X = np.array(
+#pca = PCA(n_components=2)
+#pca.fit(X)
 
 
-
-# Standardarise the values
-
-    # Time = # months since the start
-
-
-# PCA
-fit(self, X, y=None)[source]¶
-transform(self, X)
-
-
-# Plot the out put of the PCA
-
-
+# Plot the out put of the PCA  ####################################################
+#print(pca.explained_variance_ratio_)
+#print(pca.singular_values_)
 
 
 # Select the features
