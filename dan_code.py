@@ -5,31 +5,36 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+num_months = 3
+
 pres = Prescription.get_dataframe()
+print(len(pres))
+pres['bnf_code_id'].to_string()
+four_three = pres[pres['bnf_code_id']['0403']]
+print(len(four_three))
+prescriptions_by_time_start = four_three[four_three["date_span"] < datetime.datetime(2015, 4, 1)]
+print(len(prescriptions_by_time_start))
+prescriptions_by_time_end = four_three[(four_three["date_span"] >= datetime.datetime(2017, 1, 1)) and (four_three["date_span"] < datetime.datetime(2017, 4, 1))]
+print(len(prescriptions_by_time_start))
 
-pres["bnf_code_id"] = pres["bnf_code_id"].astype(str)
-
-#sesh = Session()
-#print(sesh.query(Prescription).first())
-#print(sesh.query(Prescription).filter(Prescription.bnf_code_id.like("0403")))
-prescriptions_by_time_start = pres.filter(Prescription.bnf_code_id.like("0403"), pres.date_span <= datetime.datetime(2015, 3, 1) )
-prescriptions_by_time_end = pres.filter(Prescription.bnf_code_id.like("0403"), pres.date_span <= datetime.datetime(2018, 3, 1),pres.date_span >= datetime.datetime(2018, 1, 1) )
-
-prescriptions_start_location = set(prescriptions_by_time_start.location_id)
-prescriptions_end_location = set(prescriptions_by_time_end.location_id)
+prescriptions_start_location = prescriptions_by_time_start["location_id"].unique()
+print(len(prescriptions_start_location))
+print(prescriptions_start_location)
+prescriptions_end_location = prescriptions_by_time_end["location_id"].unique()
+print(len(prescriptions_end_location))
 change_data  = []
 
 for i in prescriptions_start_location:
-    location_specfic = prescriptions_by_time_start.filter(location_id = i)
-    prescriptions_start_num_sum = np.sum(np.asarray(location_specfic.number_of_prescriptions))/3
-    prescriptions_end_num_sum = np.sum(np.asarray(location_specfic.number_of_prescriptions))/3
+    location_specfic = prescriptions_by_time_start["location_id"][i]
+    prescriptions_start_num_sum = np.sum(np.asarray(location_specfic["number_of_prescriptions"]))/num_months
+    prescriptions_end_num_sum = np.sum(np.asarray(location_specfic["number_of_prescriptions"]))/num_months
     change_data.append(prescriptions_end_num_sum - prescriptions_start_num_sum)
 
 results_df = pd.DataFrame([prescriptions_start_location,change_data], columns = ['location_id', 'Change'])
 results_df.sort_values(by=['Change'])
 
-data_plot = results_df.head(n)
+data_plot = results_df.head(10)
 
 plt.figure()
-plt.plot( np.asarray(data_plot['location_id']) , np.asarray(data_plot['Change']) )
+plt.plot(np.asarray(data_plot['location_id']) , np.asarray(data_plot['Change']))
 plt.show()
