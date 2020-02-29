@@ -17,7 +17,7 @@ class Location(Base):
     prescriptions = relationship("Prescription", backref="location")
 
     def __repr__(self):
-        return f"{self.gp_code} : {self.gp_fulladdress}"
+        return self.gp_code
 
     @staticmethod
     def load_from_csv(csv_path):
@@ -70,7 +70,7 @@ class BNFStem(Base):
             session.close()
 
     def __repr__(self):
-        return f"{self.code_stem} : {self.code_name}"
+        return self.code_stem
 
 
 class Prescription(Base):
@@ -107,7 +107,7 @@ class Prescription(Base):
                             except NoResultFound:
                                 print(f"No results found for code:{h},bnf_code:{bnfcode}")
                             session.add(p)
-                session.commit()
+                    session.commit()
         except:
             import traceback
             traceback.print_exc()
