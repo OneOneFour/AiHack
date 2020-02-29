@@ -1,6 +1,9 @@
-from . import app
-from flask import render_template
+from schemas import BNFStemSchema
+from . import app, db, BNFStem
+
 
 @app.route("/")
 def hello_world():
-    return render_template()
+    ps_schema = BNFStem()
+    ps = db.session(BNFStemSchema).all()
+    return ps_schema.dump(ps)
