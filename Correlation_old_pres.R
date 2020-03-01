@@ -21,6 +21,9 @@ model1 <- lm(AGE_GROUP_5 ~ NUMBER_OF_PATIENTS, data=age2)
 age2 <- age %>% select(as.character(40_44, 45_49, 50_54, 55_59, 60_64, 65_69))
 age3 <- age %>% select("40_45")
 ggplot(age, aes(x=AGE_GROUP_5, y=NUMBER_OF_PATIENTS)) + geom_boxplot()
-ggplot(age2, aes(x=AGE_GROUP_5, y=log(NUMBER_OF_PATIENTS))) + geom_boxplot()
+
+ggplot(age, aes(x=AGE_GROUP_5, y=log(NUMBER_OF_PATIENTS))) + geom_boxplot(colour="##0072B2")+
+  labs(x="Log(Number of Patients)", y="Age group (bands of 5)") + 
+  theme_dark()
 
 
