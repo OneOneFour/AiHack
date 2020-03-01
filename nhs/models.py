@@ -184,7 +184,7 @@ class Prescription(db.Model):
                                                  "date_span": datetime.strptime(row[0], "%Y-%m-%d"),
                                                  "number_of_prescriptions": row[i]})
 
-                            except NoResultFound:
+                            except (NoResultFound,StopIteration):
                                 print(f"No results found for code:{h},bnf_code:{bnfcode}")
                         db.session.bulk_insert_mappings(Prescription, dict_arr)
                     db.session.commit()

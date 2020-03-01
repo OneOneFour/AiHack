@@ -1,4 +1,4 @@
-from .models import Prescription, BNFStem, Location, LocationPatientNumbers
+from .models import Prescription, BNFStem, Location, LocationPatientNumbers, CCG
 from . import ma
 
 
@@ -23,3 +23,11 @@ class PrescriptionWithBNF(ma.Schema):
 class LocationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Location
+        exclude = ("id",)
+
+
+class CCGSchema(ma.Schema):
+    class Meta:
+        fields = ("ccg_code", "gp_surgeries")
+
+    gp_surgeries = ma.Nested(LocationSchema,many=True)

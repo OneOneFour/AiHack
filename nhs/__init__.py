@@ -11,5 +11,5 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
 
-from .models import BNFStem, Location, Prescription, LocationPatientNumbers
+from .models import BNFStem, Location, Prescription, LocationPatientNumbers,CCG
 from .views import *

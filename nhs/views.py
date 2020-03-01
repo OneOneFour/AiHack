@@ -1,8 +1,10 @@
 from flask import jsonify
 
-from .schemas import BNFStemSchema, LocationSchema, PrescriptionSchema, PrescriptionWithBNF
-from . import app, db, BNFStem, Location, Prescription
+
+from .schemas import BNFStemSchema, LocationSchema, PrescriptionSchema, PrescriptionWithBNF, CCGSchema
+from . import app, db, BNFStem, Location, Prescription,CCG
 from datetime import datetime
+
 
 
 @app.route("/api/bnf_stems", methods=["GET"])
@@ -15,7 +17,7 @@ def get_bnf_stems():
 @app.route("/api/locations", methods=["GET"])
 def get_locations():
     location_schema = LocationSchema(many=True)
-    locations = db.session.query(Location).all()
+    locations = Location.query.all()
     return jsonify(location_schema.dump(locations))
 
 
@@ -39,3 +41,9 @@ def get_location_prescriptions_in_timeframe(code, year, month):
     pres = Prescription.query.filter(Prescription.location.has(gp_code=code)).filter(Prescription.date_span == t)
     prescription_schema = PrescriptionWithBNF(many=True)
     return jsonify(prescription_schema.dump(pres))
+
+@app.route("/api/ccg")
+def get_ccgs():
+    ccgs_schema = CCGSchema(many=True)
+    ccgs = CCG.query.all()
+    return jsonify(ccgs_schema.dump(ccgs))
