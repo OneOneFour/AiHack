@@ -14,6 +14,13 @@ class CCG(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     ccg_code = db.Column(db.String, unique=True)
     gp_surgeries = db.relationship("Location", backref="ccg")
+    total_number = db.Column(db.Integer)
+
+    @staticmethod
+    def set_total_number():
+        for ccg in CCG.query.all():
+            ccg.total_number = sum((g.total_number for g in ccg.gp_surgeries if g))
+        db.session.commit()
 
 
 class LocationPatientNumbers(db.Model):
@@ -59,7 +66,10 @@ class Location(db.Model):
 
     @property
     def total_number(self):
-        return self.location_patient_numbers.total_number
+        try:
+            return self.location_patient_numbers.total_number
+        except AttributeError:
+            return 0
 
     @classmethod
     def get_dataframe(cls):
@@ -184,7 +194,7 @@ class Prescription(db.Model):
                                                  "date_span": datetime.strptime(row[0], "%Y-%m-%d"),
                                                  "number_of_prescriptions": row[i]})
 
-                            except (NoResultFound,StopIteration):
+                            except (NoResultFound, StopIteration):
                                 print(f"No results found for code:{h},bnf_code:{bnfcode}")
                         db.session.bulk_insert_mappings(Prescription, dict_arr)
                     db.session.commit()

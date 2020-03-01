@@ -28,6 +28,4 @@ class LocationSchema(ma.SQLAlchemyAutoSchema):
 
 class CCGSchema(ma.Schema):
     class Meta:
-        fields = ("ccg_code", "gp_surgeries")
-
-    gp_surgeries = ma.Nested(LocationSchema,many=True)
+        fields = ("ccg_code", "total_number")
