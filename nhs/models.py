@@ -6,9 +6,19 @@ from tqdm import tqdm
 import csv
 
 
+class CCG(db.Model):
+    """
+    Clinicial Commissioning
+    """
+    __tablename__ = "ccgs"
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    ccg_code = db.Column(db.String, unique=True)
+    gp_surgeries = db.relationship("Location", backref="ccg")
+
+
 class LocationPatientNumbers(db.Model):
     __tablename__ = "patient_age_groups"
-    id = db.Column(db.Integer, primary_key=True,nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     total_number = db.Column(db.Integer)
     location_id = db.Column(db.Integer, db.ForeignKey("locations.id"))
     location = db.relationship("Location", backref=db.backref("location_patient_numbers", uselist=False))
@@ -34,6 +44,8 @@ class LocationPatientNumbers(db.Model):
 
 
 class Location(db.Model):
+    PERMITTED_NG_CODE = ["Y63", "Y62", "Y59", "Y56", "Y60", "Y58", "Y61"]
+
     __tablename__ = "locations"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     gp_code = db.Column(db.String, unique=True)
@@ -41,15 +53,39 @@ class Location(db.Model):
     gp_ntgroup = db.Column(db.String, nullable=True)
     gp_ons_code = db.Column(db.String, unique=True)
     gp_fulladdress = db.Column(db.String)
+    gp_postcode = db.Column(db.String)
     prescriptions = db.relationship("Prescription", backref="location")
+    ccg_id = db.Column(db.Integer, db.ForeignKey("ccgs.id"))
 
-    def __repr__(self):
-        return self.gp_code
+    @property
+    def total_number(self):
+        return self.location_patient_numbers.total_number
 
     @classmethod
     def get_dataframe(cls):
         df = pd.read_sql(f"SELECT * FROM {cls.__tablename__}", db.engine)
         return df
+
+    @staticmethod
+    def update_from_csv(csv_path):
+        try:
+            with open(csv_path) as csv_file:
+                reader = csv.DictReader(csv_file, delimiter=",")
+                for row in reader:
+                    location = Location.query.filter(Location.gp_code == row["CODE"]).one()
+                    location.gp_postcode = row["POSTCODE"]
+                    try:
+                        location.ccg_id = CCG.query.filter(CCG.ccg_code == row["CCG_CODE"]).one().id
+                    except NoResultFound:
+                        location.ccg = CCG(ccg_code=row["CCG_CODE"])
+                        db.session.add(location.ccg)
+            db.session.commit()
+        except:
+            import traceback
+            traceback.print_exc()
+            db.session.rollback()
+        finally:
+            db.session.close()
 
     @staticmethod
     def load_from_csv(csv_path):
@@ -104,7 +140,7 @@ class BNFStem(db.Model):
             db.session.close()
 
     def __repr__(self):
-        return self.code_stem
+        return str(self.code_stem)
 
 
 class Prescription(db.Model):
@@ -148,7 +184,7 @@ class Prescription(db.Model):
                                                  "date_span": datetime.strptime(row[0], "%Y-%m-%d"),
                                                  "number_of_prescriptions": row[i]})
 
-                            except NoResultFound:
+                            except (NoResultFound,StopIteration):
                                 print(f"No results found for code:{h},bnf_code:{bnfcode}")
                         db.session.bulk_insert_mappings(Prescription, dict_arr)
                     db.session.commit()
@@ -160,4 +196,4 @@ class Prescription(db.Model):
             db.session.close()
 
     def __repr__(self):
-        return f"Perscriptions: {self.number_of_prescriptions} of {self.bnf_code} at {self.location} on {self.date_span}"
+        return f"Prescriptions: {self.number_of_prescriptions} of {self.bnf_code} at {self.location} on {self.date_span}"
