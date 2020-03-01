@@ -10,10 +10,7 @@ from datetime import datetime
 #pres['longitude'] =
 
 loc = Location.get_dataframe()  # Taking a very very long time to run
-print("hello2")
 print(loc["gp_fulladdress"].head(10))
-print("hello3")
-exit()
 
 #gp_practices = pres['gp_code'].unique()
 

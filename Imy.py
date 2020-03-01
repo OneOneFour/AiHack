@@ -5,16 +5,16 @@ import numpy as np
 from plotnine import *
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+print("hello")
 # Formatting the pres data
 pres = Prescription.get_dataframe()
 #print(pres.head())
-pres['bnf_code_id'].to_string()
+#pres['bnf_code_id'].to_string()
 
 #(ggplot(pres, aes(x=pres['date_span'], y=pres['number_of_prescriptions']))) + geom_point()
 
-sns.scatterplot(x=pres['date_span'], y=pres['number_of_prescriptions'], palette="Blues")
-plt.show()   # plot time period on the x axis, sum of depression predictions on the y axis
+#sns.scatterplot(x=pres['date_span'], y=pres['number_of_prescriptions'], palette="Blues")
+#plt.show()   # plot time period on the x axis, sum of depression predictions on the y axis
 
 ### FOURS
 # Creating the fours dataset
