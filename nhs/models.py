@@ -104,7 +104,7 @@ class BNFStem(db.Model):
             db.session.close()
 
     def __repr__(self):
-        return self.code_stem
+        return str(self.code_stem)
 
 
 class Prescription(db.Model):
@@ -160,4 +160,4 @@ class Prescription(db.Model):
             db.session.close()
 
     def __repr__(self):
-        return f"Perscriptions: {self.number_of_prescriptions} of {self.bnf_code} at {self.location} on {self.date_span}"
+        return f"Prescriptions: {self.number_of_prescriptions} of {self.bnf_code} at {self.location} on {self.date_span}"
