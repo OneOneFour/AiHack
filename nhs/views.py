@@ -6,13 +6,15 @@ from . import app, db, BNFStem, Location, Prescription,CCG
 from datetime import datetime
 
 
-
 @app.route("/api/bnf_stems", methods=["GET"])
 def get_bnf_stems():
     ps_schema = BNFStemSchema(many=True)
-    ps = db.session.query(BNFStem).all()
+    ps = BNFStem.query.all()
     return jsonify(ps_schema.dump(ps))
 
+@app.route("/")
+def index():
+    return "Welcome to our application!"
 
 @app.route("/api/locations", methods=["GET"])
 def get_locations():
@@ -24,7 +26,7 @@ def get_locations():
 @app.route("/api/locations/<code>", methods=["GET"])
 def get_location(code):
     location_schema = LocationSchema()
-    location = db.session.query(Location).filter(Location.gp_code == code).one()
+    location = Location.query.filter(Location.gp_code == code).one()
     return jsonify(location_schema.dump(location))
 
 
