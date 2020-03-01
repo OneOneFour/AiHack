@@ -1,5 +1,6 @@
 import os
 
+from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -16,7 +17,7 @@ else:
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 ma = Marshmallow(app)
-
+CORS(app)
 from .models import BNFStem, Location, Prescription, LocationPatientNumbers, CCG
 from .views import *
 

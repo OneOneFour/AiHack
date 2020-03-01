@@ -13,8 +13,30 @@ class CCG(db.Model):
     __tablename__ = "ccgs"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     ccg_code = db.Column(db.String, unique=True)
+    ccg_ons_code = db.Column(db.String)
     gp_surgeries = db.relationship("Location", backref="ccg")
     total_number = db.Column(db.Integer)
+
+    @staticmethod
+    def update():
+        try:
+            with open(r"C:\Users\Robert\PycharmProjects\AiHack\raw_data\nhs_data\gp-reg-pat-prac-all.csv") as csv_file:
+                reader = csv.DictReader(csv_file)
+                checklist = []
+                for row in reader:
+                    if row["CCG_CODE"] in checklist:
+                        continue
+                    try:
+                        ccg = CCG.query.filter(CCG.ccg_code == row["CCG_CODE"]).one()
+                        ccg.ccg_ons_code = row["ONS_CCG_CODE"]
+                        checklist.append(row["CCG_CODE"])
+                    except NoResultFound:
+                        continue
+                db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
 
     @staticmethod
     def set_total_number():
@@ -83,9 +105,9 @@ class Location(db.Model):
                 reader = csv.DictReader(csv_file, delimiter=",")
                 for row in reader:
                     location = Location.query.filter(Location.gp_code == row["CODE"]).one()
-                    location.gp_postcode = row["POSTCODE"]
+                    # location.gp_postcode = row["POSTCODE"]
                     try:
-                        location.ccg_id = CCG.query.filter(CCG.ccg_code == row["CCG_CODE"]).one().id
+                        location.ccg_id = CCG.query.filter(CCG.ccg_code == row["ONS_CCG_CODE"]).one().id
                     except NoResultFound:
                         location.ccg = CCG(ccg_code=row["CCG_CODE"])
                         db.session.add(location.ccg)
