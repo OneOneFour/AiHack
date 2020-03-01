@@ -1,16 +1,15 @@
+import pandas as pd
 from flask import jsonify
 
-
 from .schemas import BNFStemSchema, LocationSchema, PrescriptionSchema, PrescriptionWithBNF, CCGSchema
-from . import app, db, BNFStem, Location, Prescription,CCG
+from . import app, db, BNFStem, Location, Prescription, CCG
 from datetime import datetime
-
 
 
 @app.route("/api/bnf_stems", methods=["GET"])
 def get_bnf_stems():
     ps_schema = BNFStemSchema(many=True)
-    ps = db.session.query(BNFStem).all()
+    ps = BNFStem.query.all()
     return jsonify(ps_schema.dump(ps))
 
 
@@ -24,7 +23,7 @@ def get_locations():
 @app.route("/api/locations/<code>", methods=["GET"])
 def get_location(code):
     location_schema = LocationSchema()
-    location = db.session.query(Location).filter(Location.gp_code == code).one()
+    location = Location.query.filter(Location.gp_code == code).one()
     return jsonify(location_schema.dump(location))
 
 
@@ -42,8 +41,17 @@ def get_location_prescriptions_in_timeframe(code, year, month):
     prescription_schema = PrescriptionWithBNF(many=True)
     return jsonify(prescription_schema.dump(pres))
 
+
 @app.route("/api/ccg")
 def get_ccgs():
     ccgs_schema = CCGSchema(many=True)
     ccgs = CCG.query.all()
     return jsonify(ccgs_schema.dump(ccgs))
+
+
+@app.route("/api/graph/<code>/relative_usage")
+def graph_of_relative_usage(code):
+    for area_code in Prescription.PERMITTED_NG_CODE:
+        prescriptions = Prescription.query.join(BNFStem).filter(BNFStem.code_stem == code).sort_by(
+            Prescription.date_span).all()
+
