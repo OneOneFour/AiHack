@@ -96,13 +96,13 @@ which_selected = sk.fit(X_train, y_train).get_support() #Returns the index of th
 #print(which_selected)
 #attemp_X_Best = X[which_selected]
 # # 5) fit    #################################
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LinearRegression
 #LogReg = LogisticRegression()
-logregmodel = LogisticRegression(random_state=42).fit(X_train, y_train)
+linmodel = LinearRegression(random_state=42).fit(X_train, y_train)
 # # 6) predict and assess   #################################
-y_pred = logregmodel.predict(X_test)
+y_pred = linmodel.predict(X_test)
 #logregmodel.score(y_pred, y_test)
-print(logregmodel.get_params())
+print(linmodel.get_params())
 print(X_test.shape,y_test.shape,X_train.shape,y_pred.shape)
 plt.figure()
 plt.scatter(y_test,y_pred)
