@@ -1,4 +1,4 @@
-from nhs import Session
+#from nhs import Session
 from nhs.models import Location,Prescription
 import datetime
 import numpy as np
@@ -6,15 +6,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 num_months = 3
-
 pres = Prescription.get_dataframe()
 print(len(pres))
-pres['bnf_code_id'].to_string()
-four_three = pres[pres['bnf_code_id']['0403']]
+#print(pres['bnf_code_id'].head(10))
+print(pres['bnf_code_id'])
+pres['bnf_code_id'] = pres['bnf_code_id'].astype(str)
+print(pres['bnf_code_id'])
+four_three = pres.loc[pres['bnf_code_id'] == '403']
 print(len(four_three))
-prescriptions_by_time_start = four_three[four_three["date_span"] < datetime.datetime(2015, 4, 1)]
+prescriptions_by_time_start = four_three.loc[four_three["date_span"] < datetime.datetime(2015, 4, 1)]
 print(len(prescriptions_by_time_start))
-prescriptions_by_time_end = four_three[(four_three["date_span"] >= datetime.datetime(2017, 1, 1)) and (four_three["date_span"] < datetime.datetime(2017, 4, 1))]
+prescriptions_by_time_end = four_three.loc[(four_three["date_span"] >= datetime.datetime(2017, 1, 1)) and (four_three["date_span"] < datetime.datetime(2017, 4, 1))]
+#prescriptions_by_time_end = four_three[(four_three["date_span"] >= datetime.datetime(2017, 1, 1)) and (four_three["date_span"] < datetime.datetime(2017, 4, 1))]
 print(len(prescriptions_by_time_start))
 
 prescriptions_start_location = prescriptions_by_time_start["location_id"].unique()

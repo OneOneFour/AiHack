@@ -1,4 +1,4 @@
-from schemas import BNFStemSchema
+from .schemas import BNFStemSchema
 from . import app, db, BNFStem
 
 
