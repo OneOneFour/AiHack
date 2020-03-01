@@ -1,5 +1,6 @@
 import pandas as pd
 from flask import jsonify
+from flask_cors import cross_origin
 
 from .schemas import BNFStemSchema, LocationSchema, PrescriptionSchema, PrescriptionWithBNF, CCGSchema
 from . import app, db, BNFStem, Location, Prescription, CCG
@@ -43,6 +44,7 @@ def get_location_prescriptions_in_timeframe(code, year, month):
 
 
 @app.route("/api/ccg")
+@cross_origin()
 def get_ccgs():
     ccgs_schema = CCGSchema(many=True)
     ccgs = CCG.query.all()

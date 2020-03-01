@@ -28,4 +28,4 @@ class LocationSchema(ma.SQLAlchemyAutoSchema):
 
 class CCGSchema(ma.Schema):
     class Meta:
-        fields = ("ccg_code", "total_number")
+        fields = ("ccg_code", "total_number", "ccg_ons_code")

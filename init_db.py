@@ -8,4 +8,4 @@ from nhs import db
 # BNFStem.load_from_csv(r"C:\Users\Robert\PycharmProjects\AiHack\raw_data\nhs_data\BNF_stems.csv")
 # print("loaded bnfs")
 # Prescription.load_from_csv(r"C:\Users\Robert\PycharmProjects\AiHack\raw_data\nhs_data", "0403")
-CCG.set_total_number()
+CCG.update()
