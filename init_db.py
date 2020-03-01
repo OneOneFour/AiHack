@@ -1,4 +1,4 @@
-from nhs.models import Location, BNFStem, Prescription
+from nhs.models import Location, BNFStem, Prescription, CCG
 from nhs import db
 
 #
@@ -6,5 +6,6 @@ from nhs import db
 # Location.load_from_csv(r"C:\Users\Robert\PycharmProjects\AiHack\raw_data\nhs_data\epraccur.csv")
 # print("loaded locations")
 # BNFStem.load_from_csv(r"C:\Users\Robert\PycharmProjects\AiHack\raw_data\nhs_data\BNF_stems.csv")
-print("loaded bnfs")
-Prescription.load_from_csv(r"C:\Users\Robert\PycharmProjects\AiHack\raw_data\nhs_data", "0403")
+# print("loaded bnfs")
+# Prescription.load_from_csv(r"C:\Users\Robert\PycharmProjects\AiHack\raw_data\nhs_data", "0403")
+CCG.set_total_number()

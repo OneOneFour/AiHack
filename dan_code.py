@@ -16,6 +16,7 @@ four_three = pres.loc[pres['bnf_code_id'] == '403']
 print(len(four_three))
 prescriptions_by_time_start = four_three.loc[four_three["date_span"] < datetime.datetime(2015, 4, 1)]
 print(len(prescriptions_by_time_start))
+#NEED TO FIX LIE BELOW
 prescriptions_by_time_end = four_three.loc[(four_three["date_span"] >= datetime.datetime(2017, 1, 1)) and (four_three["date_span"] < datetime.datetime(2017, 4, 1))]
 #prescriptions_by_time_end = four_three[(four_three["date_span"] >= datetime.datetime(2017, 1, 1)) and (four_three["date_span"] < datetime.datetime(2017, 4, 1))]
 print(len(prescriptions_by_time_start))
