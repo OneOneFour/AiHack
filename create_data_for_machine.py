@@ -5,7 +5,8 @@ from nhs import db
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-#pres = Prescription.query.join(BNFStem).filter(BNFStem.code_stem > 10000).all()
+
+pres_test = Prescription.query.join(BNFStem).filter(BNFStem.code_stem > 10000).all()
 
 pres = Prescription.query.limit(100)
 #print(pres)
@@ -17,6 +18,8 @@ for p in pres:
         "BNF":p.bnf_code.code_stem,
         "NT_GROUP":p.location.gp_ntgroup,
         "NUM_PRES":p.number_of_prescriptions
+        "PROP_0403_PRES":p.number_of_prescriptions
+
     },ignore_index=True)
 #print(prescription_df.head())
 # #TIME
