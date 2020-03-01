@@ -104,7 +104,7 @@ class BNFStem(db.Model):
             db.session.close()
 
     def __repr__(self):
-        return self.code_stem
+        return str(self.code_stem)
 
 
 class Prescription(db.Model):
