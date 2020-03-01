@@ -4,19 +4,22 @@ from datetime import datetime
 from nhs import db
 import pandas as pd
 
-pres = Prescription.get_dataframe()
+pres = Prescription.query.limit(100).all()
+#Patient.query.filter(Patient.mother.has(phenoscore=10))
+#Prescription.get_dataframe()
+#print(len(pres))
+#exit()
 prepped_data = pd.DataFrame()
+for p in pres:
+    prepped_data = prepped_data.append({
+        "Time":p.date_span.year,
+        "BNF":p.bnf_code,
+        "NT_GROUP":p.location.gp_ntgroup,
+        "NUM_PRESCRIPTION":p.number_of_prescriptions
+    },ignore_index=True)
 
 #TIME
-prepped_data["Time"] = pres['date_span'].year
-#BNF CODE
-prepped_data["BNF"] = pres.bnf_stems['code_stem']
-#gp_ntgroup
-prepped_data["NT_GROUP"] = pres.locations['gp_ntgroup']
-#gp_ons_code
-prepped_data["ONS_CODE"] = pres.locations['gp_ons_code']
-#number of prespcriptions
-prepped_data["NUM_PRESCIPTION"] = pres['number_of_prescriptions']
+print(prepped_data.head())
 
 
 #Prescription.query.filter(Prescription.location.has(gp_code=code))

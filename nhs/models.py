@@ -111,7 +111,6 @@ class Prescription(db.Model):
     __tablename__ = "prescriptions"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     bnf_code_id = db.Column(db.Integer, db.ForeignKey("bnf_stems.id"))
-
     location_id = db.Column(db.Integer, db.ForeignKey("locations.id"))
     number_of_prescriptions = db.Column(db.Integer)
     date_span = db.Column(db.Date)
