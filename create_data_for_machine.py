@@ -6,22 +6,34 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-pres_test = Prescription.query.join(BNFStem).filter(BNFStem.code_stem > 10000).all()
-
-pres = Prescription.query.limit(100)
-#print(pres)
-# prepped_data = pd.DataFrame()
+pres = Prescription.query.all()
+#pres = Prescription.query.join(BNFStem).filter(BNFStem.code_stem >= 40000).filter(BNFStem.code_stem < 50000)
 prescription_df=pd.DataFrame()
 for p in pres:
-    prescription_df = prescription_df.append({
+    try:
+        total_number = p.location.total_number
+        a = {
         "Time":p.date_span.year,
         "BNF":p.bnf_code.code_stem,
         "NT_GROUP":p.location.gp_ntgroup,
-        "NUM_PRES":p.number_of_prescriptions
-        "PROP_0403_PRES":p.number_of_prescriptions
+        "NUM_PRES":p.number_of_prescriptions,
+        "PEOPLE":total_number
+        #"CCG":p.gp_surgeries.ccg_code,
+        }
+    except:
+        continue
+    prescription_df = prescription_df.append(a,ignore_index=True)
+prescription_df["DRUG_PROP"] = ""
+NT_GROUP_list = prescription_df["NT_GROUP"].unique()
+for i in NT_GROUP_list:
+    given_NT_GROUP = prescription_df[prescription_df["NT_GROUP"] == i]    #df.loc[(df["B"] > 50) & (df["C"] == 900), "A"]
+    given_NT_GROUP_and_0403 = given_NT_GROUP.loc[(given_NT_GROUP["BNF"] > 40300) & (given_NT_GROUP["BNF"] < 40305)]
+    sum_0403 = given_NT_GROUP_and_0403["NUM_PRES"].sum()
+    sum_all = given_NT_GROUP["NUM_PRES"].sum()
+    print(sum_0403,sum_all)
+    ratio_region = sum_0403/sum_all
+    prescription_df.loc[prescription_df["NT_GROUP"] == i, 'DRUG_PROP'] = ratio_region
 
-    },ignore_index=True)
-#print(prescription_df.head())
 # #TIME
 #print(prepped_data)
 # 2) categoric to not categoric    #################################
@@ -43,10 +55,10 @@ prescription_df.drop(["NT_GROUP"],axis = 1, inplace= True)
 #     # This will be a threshold level based on a proportion
 #print(scaled)
 #outcome = #fake results
-prescription_arr = np.asarray(prescription_df)
+
 #print(prescription_arr.shape)
-a = len(prescription_arr)
-extra = np.random.randint(2,size=a)
+# a = len(prescription_arr)
+# extra = np.random.randint(2,size=a)
 
 #prescription_arr = np.transpose(prescription_arr)
 #print("hey")
@@ -57,10 +69,15 @@ extra = np.random.randint(2,size=a)
 #prescription_arr = np.transpose(prescription_arr)
 #print(prescription_arr.shape)
 
-X = prescription_arr
-y = extra
+X = np.asarray(prescription_df.iloc[:,:-1])
+y = np.asarray(prescription_df.iloc[:,-1])
 #
-# print(X.shape,y.shape)
+print(X.shape,y.shape)
+print(X)
+print(y)
+
+prescription_arr = np.asarray(prescription_df)
+
 # # 4) train and test split    #################################
 from sklearn.model_selection import train_test_split
 #X.to_numpy()
